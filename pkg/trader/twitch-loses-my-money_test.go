@@ -1,7 +1,6 @@
 package trader_test
 
 import (
-	"log"
 	"testing"
 
 	"github.com/theprimeagen/crypto-legends/pkg/irc"
@@ -16,15 +15,16 @@ func (t *TestIrcClient) Channel() chan irc.IrcMessage {
     return t.channel
 }
 
-func TestTwitchLosesMyMoney(t *testing.T) {
+func TestTradeAccumulator(t *testing.T) {
     client := TestIrcClient{make(chan irc.IrcMessage, 1)}
     tlm := trader.NewTwitchLosesMoney(&client)
 
-    tlm.Start()
-    client.channel <- irc.IrcMessage{Name: "foo", Message: "sell"}
-    client.channel <- irc.IrcMessage{Name: "foo2", Message: "buy"}
-    client.channel <- irc.IrcMessage{Name: "foo3", Message: "sell"}
-    res := tlm.GetResults()
+    tlm.Bsh.Start()
+    tlm.Bsh.ReceiveMessage("foo", trader.Sell)
+    tlm.Bsh.ReceiveMessage("foo2", trader.Buy)
+    tlm.Bsh.ReceiveMessage("foo3", trader.Buy)
+    tlm.Bsh.ReceiveMessage("foo2", trader.Sell)
+    res := tlm.Bsh.GetResults()
 
     if res != trader.Sell {
         t.Errorf("Expected Sell but got %s", res);

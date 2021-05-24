@@ -14,8 +14,13 @@ const (
 	HODL           = "HodlBABY"
 )
 
-type TwitchLosesMoney struct {
-	client  irc.IrcClient
+type TradeAccumulator struct {
 	traders map[string]TradeType
-    lock sync.Mutex
+	lock    sync.Mutex
+}
+
+type TwitchLosesMoney struct {
+    Bsh TradeAccumulator
+
+	client  irc.IrcClient
 }
